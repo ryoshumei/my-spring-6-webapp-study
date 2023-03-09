@@ -51,8 +51,11 @@ public class BootstrapData implements CommandLineRunner {
 
 
         //do something with association
+        //add book to author && add author to book
         ericSaved.getBooks().add(dddSaved);
         rodSaved.getBooks().add(noEJBSaved);
+        dddSaved.getAuthors().add(ericSaved);
+        noEJBSaved.getAuthors().add(rodSaved);
 
         //create new publisher
         Publisher publisher = new Publisher();
