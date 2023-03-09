@@ -2,6 +2,7 @@ package com.myspringtutorial.spring6webapptutorial.domain;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,7 +15,7 @@ public class Author {
     private String lastName;
 
     @ManyToMany(mappedBy = "authors") // managed by "authors" , owner is Book.authors
-    private Set<Book> books;
+    private Set<Book> books = new HashSet<>();
 
     public Set<Book> getBooks() {
         return books;
@@ -48,6 +49,16 @@ public class Author {
         this.lastName = lastName;
     }
 
+
+    @Override
+    public String toString() {
+        return "Author{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", books=" + books +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
