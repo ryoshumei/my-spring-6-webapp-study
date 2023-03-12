@@ -1,5 +1,5 @@
 package com.myspring6di.spring6di;
-
+//Caution :  every package for this project should be under this package
 import com.myspring6di.spring6di.controllers.MyController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
