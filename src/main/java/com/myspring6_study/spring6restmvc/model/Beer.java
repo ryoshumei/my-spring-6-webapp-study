@@ -1,9 +1,14 @@
 package com.myspring6_study.spring6restmvc.model;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Builder
+@Data
 public class Beer {
     private UUID id;
     private Integer version;
