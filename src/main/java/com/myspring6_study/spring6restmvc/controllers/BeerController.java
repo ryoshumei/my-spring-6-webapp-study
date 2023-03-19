@@ -3,6 +3,7 @@ package com.myspring6_study.spring6restmvc.controllers;
 import com.myspring6_study.spring6restmvc.model.Beer;
 import com.myspring6_study.spring6restmvc.services.BeerService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.*;
 
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController  //indicate that this controller will return json not html
 @RequestMapping("/api/v1/beer")
 public class BeerController {
