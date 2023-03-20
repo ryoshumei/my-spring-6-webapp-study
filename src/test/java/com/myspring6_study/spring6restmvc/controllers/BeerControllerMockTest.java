@@ -1,9 +1,12 @@
 package com.myspring6_study.spring6restmvc.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myspring6_study.spring6restmvc.model.Beer;
 import com.myspring6_study.spring6restmvc.services.BeerService;
 import com.myspring6_study.spring6restmvc.services.BeerServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,8 +20,11 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -28,10 +34,59 @@ class BeerControllerMockTest {
     @Autowired
     MockMvc mockMvc;
 
+    @Autowired//this means we will use springboot context
+    ObjectMapper objectMapper;
+
     @MockBean
     BeerService beerService;
 
-    BeerServiceImpl beerServiceImpl = new BeerServiceImpl();//No Autowired here , implementation of BeerService Interface, make an instance
+    BeerServiceImpl beerServiceImpl;;//No Autowired here , implementation of BeerService Interface, make an instance
+
+    @BeforeEach
+    void setUp(){
+        beerServiceImpl = new BeerServiceImpl();// For providing data
+    }
+
+
+    @Test
+    void testUpdateBeer() throws Exception {
+        Beer beer = beerServiceImpl.listBeers().get(0);
+
+        Beer beer1 = beerServiceImpl.listBeers().get(1);
+
+        mockMvc.perform(put("/api/v1/beer/" + beer.getId())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isNoContent());
+
+        verify(beerService).updateById(eq(beer.getId()),any(Beer.class));//make sure updateById was called 1 time with the params
+
+
+    }
+
+    @Test
+    void testCreateNewBeer() throws Exception {
+        Beer beer = beerServiceImpl.listBeers().get(0);
+        beer.setVersion(null);
+        beer.setId(null);
+
+        given(beerService.saveNewBeer(any(Beer.class))).willReturn(beerServiceImpl.listBeers().get(1));
+
+        mockMvc.perform(post("/api/v1/beer")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(beer)))//ends here : do POST
+                .andExpect(status().isCreated())
+                .andExpect(header().exists("Location"));
+    }
+    @Test
+    void testPrintAJsonString() throws JsonProcessingException {
+        Beer testBeer = beerServiceImpl.listBeers().get(0);
+
+        System.out.println(objectMapper.writeValueAsString(testBeer));
+    }
+
 
     @Test
     void testListBeers() throws Exception {
