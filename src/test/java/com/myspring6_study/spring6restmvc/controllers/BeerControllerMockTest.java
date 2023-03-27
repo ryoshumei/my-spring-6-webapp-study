@@ -57,6 +57,18 @@ class BeerControllerMockTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
     ArgumentCaptor<Beer> beerArgumentCaptor;
+
+
+    @Test
+    void getBeerByIdNotFound() throws Exception{
+
+        // This will replace @Service method in controller, if there is no beerService.getBeerById() given will not work
+        given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+
+        mockMvc.perform(get(BeerController.BEER_PATH_ID,UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+    }
+
     @Test
     void testPatchBeer() throws Exception {
         Beer beer = beerServiceImpl.listBeers().get(0);
