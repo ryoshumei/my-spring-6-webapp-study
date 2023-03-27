@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,7 +64,8 @@ class BeerControllerMockTest {
     void getBeerByIdNotFound() throws Exception{
 
         // This will replace @Service method in controller, if there is no beerService.getBeerById() given will not work
-        given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+        // willReturn(Optional.empty() will hit .orElseThrow(NotFoundException::new)
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(BeerController.BEER_PATH_ID,UUID.randomUUID()))
                 .andExpect(status().isNotFound());
@@ -172,7 +174,7 @@ class BeerControllerMockTest {
         // relationship between beerService and beerServiceImpl??
         Beer testBeer = beerServiceImpl.listBeers().get(0);// get a beer from beerServiceImpl
         given(beerService.getBeerById(testBeer.getId()))
-                .willReturn(testBeer);// return testBeer if matched , to mockMvc.perform below
+                .willReturn(Optional.of(testBeer));// return testBeer if matched , to mockMvc.perform below
 
         //"GET" request to this url and get response , this will call method in controller
         mockMvc.perform(get(BeerController.BEER_PATH_ID,testBeer.getId())

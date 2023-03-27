@@ -78,7 +78,7 @@ public class BeerController {
 
         //Beer testBeer = Beer.builder().beerName("test").build();
         //return testBeer;
-        return beerService.getBeerById(id);
+        return beerService.getBeerById(id).orElseThrow(NotFoundException::new);
     }
 
 }
