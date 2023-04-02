@@ -3,13 +3,12 @@ package com.myspring6_study.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.myspring6_study.spring6restmvc.model.Beer;
+import com.myspring6_study.spring6restmvc.model.BeerDTO;
 import com.myspring6_study.spring6restmvc.services.BeerService;
 import com.myspring6_study.spring6restmvc.services.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,7 +56,7 @@ class BeerControllerMockTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
-    ArgumentCaptor<Beer> beerArgumentCaptor;
+    ArgumentCaptor<BeerDTO> beerArgumentCaptor;
 
 
     @Test
@@ -73,7 +72,7 @@ class BeerControllerMockTest {
 
     @Test
     void testPatchBeer() throws Exception {
-        Beer beer = beerServiceImpl.listBeers().get(0);
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
 
         // Code below : just simulate what client actually does, prepare a Map(will be converted to a json content).Representing a property going to be updated
         Map<String, Object> beerMap = new HashMap<>();
@@ -94,8 +93,8 @@ class BeerControllerMockTest {
 
     @Test
     void testDeleteBeer() throws Exception {
-        Beer beer = beerServiceImpl.listBeers().get(0);
-        Beer beer1 = beerServiceImpl.listBeers().get(1);
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
+        BeerDTO beer1 = beerServiceImpl.listBeers().get(1);
 
         mockMvc.perform(delete(BeerController.BEER_PATH_ID, beer.getId())
                 .accept(MediaType.APPLICATION_JSON))
@@ -114,9 +113,9 @@ class BeerControllerMockTest {
 
     @Test
     void testUpdateBeer() throws Exception {
-        Beer beer = beerServiceImpl.listBeers().get(0);
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
 
-        Beer beer1 = beerServiceImpl.listBeers().get(1);
+        BeerDTO beer1 = beerServiceImpl.listBeers().get(1);
 
         mockMvc.perform(put(BeerController.BEER_PATH_ID, beer.getId())
                 .accept(MediaType.APPLICATION_JSON)
@@ -124,18 +123,18 @@ class BeerControllerMockTest {
                 .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent());
 
-        verify(beerService).updateById(eq(beer.getId()),any(Beer.class));//make sure updateById was called 1 time with the params
+        verify(beerService).updateById(eq(beer.getId()),any(BeerDTO.class));//make sure updateById was called 1 time with the params
 
 
     }
 
     @Test
     void testCreateNewBeer() throws Exception {
-        Beer beer = beerServiceImpl.listBeers().get(0);
+        BeerDTO beer = beerServiceImpl.listBeers().get(0);
         beer.setVersion(null);
         beer.setId(null);
 
-        given(beerService.saveNewBeer(any(Beer.class))).willReturn(beerServiceImpl.listBeers().get(1));
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers().get(1));
 
         mockMvc.perform(post(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -146,7 +145,7 @@ class BeerControllerMockTest {
     }
     @Test
     void testPrintAJsonString() throws JsonProcessingException {
-        Beer testBeer = beerServiceImpl.listBeers().get(0);
+        BeerDTO testBeer = beerServiceImpl.listBeers().get(0);
 
         System.out.println(objectMapper.writeValueAsString(testBeer));
     }
@@ -172,7 +171,7 @@ class BeerControllerMockTest {
         // that means ? this test can not make ture the method in service will work properly
         // this is the test only for Controller??? Yes
         // relationship between beerService and beerServiceImpl??
-        Beer testBeer = beerServiceImpl.listBeers().get(0);// get a beer from beerServiceImpl
+        BeerDTO testBeer = beerServiceImpl.listBeers().get(0);// get a beer from beerServiceImpl
         given(beerService.getBeerById(testBeer.getId()))
                 .willReturn(Optional.of(testBeer));// return testBeer if matched , to mockMvc.perform below
 

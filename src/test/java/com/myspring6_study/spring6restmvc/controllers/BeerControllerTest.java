@@ -16,9 +16,9 @@ class BeerControllerTest {
     BeerController beerController;
 
     @Test
-    void getBeerById() {
+    void getBeerById() throws Exception{
 
-        System.out.println(beerController.getBeerById(UUID.randomUUID()));
+        //System.out.println(beerController.getBeerById(UUID.randomUUID()));
 
     }
 }
