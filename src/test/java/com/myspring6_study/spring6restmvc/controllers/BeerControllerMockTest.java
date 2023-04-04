@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+//Test the interaction of the controller & framework
 @WebMvcTest(BeerController.class) // bind Controller Class here
 class BeerControllerMockTest {
 

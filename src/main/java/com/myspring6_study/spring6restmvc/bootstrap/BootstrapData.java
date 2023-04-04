@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
+@RequiredArgsConstructor// DI repos with 'final'  fields
 public class BootstrapData implements CommandLineRunner {
 
     private final BeerRepository beerRepository;
