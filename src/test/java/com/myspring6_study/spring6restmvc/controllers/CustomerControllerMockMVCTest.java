@@ -37,7 +37,7 @@ class CustomerControllerMockMVCTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean//create bean inside of spring context of mokito
+    @MockBean//create bean inside of spring context of Mockito
     CustomerService customerService;
 
     CustomerServiceImpl customerServiceImpl;// use this as a data provider
