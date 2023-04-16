@@ -20,12 +20,14 @@ public class Customer {
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(length = 36, columnDefinition = "varchar(36)", updatable = false, nullable = false)
-    UUID id;
-    String customerName;
+    private UUID id;
+    private String customerName;
+
+
 
     @Version//locking strategy that is being used by hibernate
-    Integer version;
-    LocalDateTime createdDate;
-    LocalDateTime lastModifiedDate;
+    private Integer version;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 
 }
