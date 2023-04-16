@@ -23,7 +23,8 @@ public class Customer {
     private UUID id;
     private String customerName;
 
-
+    @Column(length = 255)
+    private String email;
 
     @Version//locking strategy that is being used by hibernate
     private Integer version;
