@@ -1,8 +1,8 @@
 package com.myspring6_study.spring6restmvc.controllers;
 
 import com.myspring6_study.spring6restmvc.model.BeerDTO;
+import com.myspring6_study.spring6restmvc.model.BeerStyle;
 import com.myspring6_study.spring6restmvc.services.BeerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -67,8 +67,11 @@ public class BeerController {
     }
 
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> listBeers(){
-        return beerService.listBeers();
+    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+                                   @RequestParam(required = false) BeerStyle beerStyle,
+                                   @RequestParam(required = false) Boolean showInventory){
+
+        return beerService.listBeers(beerName, beerStyle, showInventory);
     }
 
 //    @ExceptionHandler(NotFoundException.class)
