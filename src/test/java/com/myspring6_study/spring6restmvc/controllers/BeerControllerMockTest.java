@@ -3,6 +3,7 @@ package com.myspring6_study.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myspring6_study.spring6restmvc.entities.Beer;
 import com.myspring6_study.spring6restmvc.model.BeerDTO;
 import com.myspring6_study.spring6restmvc.services.BeerService;
 import com.myspring6_study.spring6restmvc.services.BeerServiceImpl;
@@ -15,14 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -64,7 +63,7 @@ class BeerControllerMockTest {
 
         BeerDTO beerDTO = BeerDTO.builder().build();
 
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null, null, false).get(1));
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(1));
 
         MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -91,7 +90,7 @@ class BeerControllerMockTest {
 
     @Test
     void testPatchBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.listBeers(null, null, false).get(0);
+        BeerDTO beer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
 
         // Code below : just simulate what client actually does, prepare a Map(will be converted to a json content).Representing a property going to be updated
         Map<String, Object> beerMap = new HashMap<>();
@@ -112,8 +111,8 @@ class BeerControllerMockTest {
 
     @Test
     void testDeleteBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.listBeers(null, null, false).get(0);
-        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false).get(1);
+        BeerDTO beer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
+        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(1);
 
         given(beerService.deleteById(any())).willReturn(true);
 
@@ -134,9 +133,9 @@ class BeerControllerMockTest {
 
     @Test
     void testUpdateBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.listBeers(null, null, false).get(0);
+        BeerDTO beer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
 
-        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false).get(1);
+        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(1);
 
         given(beerService.updateById(any(),any())).willReturn(Optional.of(beer));
 
@@ -153,10 +152,10 @@ class BeerControllerMockTest {
 
     @Test
     void testUpdateBeerBlankName() throws Exception {
-        BeerDTO beer = beerServiceImpl.listBeers(null, null, false).get(0);
+        BeerDTO beer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
         beer.setBeerName("");
 
-        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false).get(1);
+        BeerDTO beer1 = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(1);
 
         given(beerService.updateById(any(),any())).willReturn(Optional.of(beer));
 
@@ -174,11 +173,11 @@ class BeerControllerMockTest {
 
     @Test
     void testCreateNewBeer() throws Exception {
-        BeerDTO beer = beerServiceImpl.listBeers(null, null, false).get(0);
+        BeerDTO beer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
         beer.setVersion(null);
         beer.setId(null);
 
-        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null, null, false).get(1));
+        given(beerService.saveNewBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(1));
 
         mockMvc.perform(post(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -189,7 +188,7 @@ class BeerControllerMockTest {
     }
     @Test
     void testPrintAJsonString() throws JsonProcessingException {
-        BeerDTO testBeer = beerServiceImpl.listBeers(null, null, false).get(0);
+        BeerDTO testBeer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);
 
         System.out.println(objectMapper.writeValueAsString(testBeer));
     }
@@ -197,13 +196,16 @@ class BeerControllerMockTest {
 
     @Test
     void testListBeers() throws Exception {
-        given(beerService.listBeers(null, null, null)).willReturn(beerServiceImpl.listBeers(null, null, false));
+        Page<BeerDTO> beerDTOSList = beerServiceImpl.listBeers(null, null, false, null, null);
+
+        given(beerService.listBeers(null, null, null, null, null))
+                .willReturn(beerDTOSList);
 
         mockMvc.perform(get(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+                .andExpect(jsonPath("$.content.length()", is(3)));
 
 
     }
@@ -215,7 +217,7 @@ class BeerControllerMockTest {
         // that means ? this test can not make ture the method in service will work properly
         // this is the test only for Controller??? Yes
         // relationship between beerService and beerServiceImpl??
-        BeerDTO testBeer = beerServiceImpl.listBeers(null, null, false).get(0);// get a beer from beerServiceImpl
+        BeerDTO testBeer = beerServiceImpl.listBeers(null, null, false, 1, 25).getContent().get(0);// get a beer from beerServiceImpl
         given(beerService.getBeerById(testBeer.getId()))
                 .willReturn(Optional.of(testBeer));// return testBeer if matched , to mockMvc.perform below
 
